@@ -2,4 +2,5 @@
 config/dev.yaml
 dev.env
 *.bat
+.idea
 
