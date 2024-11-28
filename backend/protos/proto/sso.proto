@@ -1,0 +1,45 @@
+syntax = "proto3";
+
+package auth;
+
+option go_package = "forthey.sso.v1;ssov1";
+
+service Auth {
+  rpc Register(RegisterRequest) returns (RegisterResponse);
+  rpc LoginByEmail(LoginByEmailRequest) returns (LoginResponse);
+  rpc LoginByUsername(LoginByUsernameRequest) returns (LoginResponse);
+  rpc IsAdmin(IsAdminRequest) returns (IsAdminResponse);
+}
+
+message RegisterRequest {
+  string email = 1;
+  string username = 2;
+  string password = 3;
+}
+
+message RegisterResponse {
+  int64 user_id = 1;
+  optional string error = 2;
+}
+
+message LoginByEmailRequest {
+  string email = 1;
+  string password = 3;
+}
+
+message LoginByUsernameRequest {
+  string username = 1;
+  string password = 3;
+}
+
+message LoginResponse {
+  string token = 1;
+}
+
+message IsAdminRequest {
+  int64 user_id = 1;
+}
+
+message IsAdminResponse {
+  bool is_admin = 1;
+}
