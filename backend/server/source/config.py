@@ -17,17 +17,17 @@ class Postgres(BaseModel):
     pg_port: int
 
 
-class Settings(BaseSettings):
+class Settings(BaseModel):
     server: Server
     postgres: Postgres
 
     @property
     def get_psycopg_url(self):
-        return f"postgresql+psycopg://{self.postgres.user}:{self.postgres.password}@{self.postgres.host}:{str(self.postgres.port)}/{str(self.postgres.name)}"
+        return f"postgresql+psycopg://{self.postgres.pg_user}:{self.postgres.pg_password}@{self.postgres.pg_host}:{str(self.postgres.pg_port)}/{str(self.postgres.pg_name)}"
 
-    model_config = SettingsConfigDict(yaml_file="../config.yaml")
 
 THIS_DIR = Path(__file__).parent
+
 
 def load_yaml(*paths: Path) -> dict[str, any]:
     config: dict[str, any] = {}
@@ -40,7 +40,6 @@ def load_yaml(*paths: Path) -> dict[str, any]:
                 f"Config file has no top-level mapping: {path}"
             )
         config = {**config, **sub_config}
-
     return config
 
 
