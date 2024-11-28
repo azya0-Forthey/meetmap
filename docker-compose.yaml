@@ -1,16 +1,31 @@
 version: '3.9'
 
+name: meetmap
+
 services:
-  db:
-    container_name: db
+  postgres:
+    container_name: postgres
     image: postgres
     restart: always
     environment:
-      - POSTGRES_DB=${POSTGRES_DB}
-      - POSTGRES_USER=${POSTGRES_USER}
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${pg_name}
+      - POSTGRES_USER=${pg_user}
+      - POSTGRES_PASSWORD=${pg_password}
+
+  server:
+    env_file:
+      - backend/server/config.yaml
+    container_name: server
+    build:
+      dockerfile: server/Dockerfile
+      context: backend
+    restart: always
+    environment:
+      - PORT=${server_port}
     ports:
-      - "${POSTGRES_PORT}:${POSTGRES_PORT}"
+      - "${server_port}:${server_port}"
+    depends_on:
+      - postgres
 
   adminer:
     image: adminer
@@ -18,19 +33,5 @@ services:
     ports:
       - "${ADMINER_PORT}:${ADMINER_PORT}"
     depends_on:
-      - db
-
-  api:
-    container_name: api
-    build:
-      context: ./api
-      dockerfile: Dockerfile
-    restart: always
-    ports:
-      - "${BACKEND_PORT}:${BACKEND_PORT}"
-    env_file:
-      - .env
-    depends_on:
-      - db
-    command: ./run
+      - postgres
   
