@@ -11,13 +11,18 @@ services:
       - POSTGRES_DB=${pg_name}
       - POSTGRES_USER=${pg_user}
       - POSTGRES_PASSWORD=${pg_password}
+    healthcheck:
+      test: ["CMD-SHELL", "sh -c 'pg_isready -U ${pg_user}'"]
+      interval: 1s
+      timeout: 5s
+      retries: 10
 
   server:
     env_file:
       - backend/server/config.yaml
     container_name: server
     build:
-      dockerfile: server/Dockerfile
+      dockerfile: ../dockerfiles/server/Dockerfile
       context: backend
     restart: always
     environment:
@@ -25,7 +30,8 @@ services:
     ports:
       - "${server_port}:${server_port}"
     depends_on:
-      - postgres
+      postgres:
+        condition: service_healthy
 
   adminer:
     image: adminer
@@ -33,5 +39,27 @@ services:
     ports:
       - "${ADMINER_PORT}:${ADMINER_PORT}"
     depends_on:
-      - postgres
-  
+      postgres:
+        condition: service_healthy
+
+  migrate_tables:
+    container_name: migrate_tables
+    restart: no
+    build:
+      dockerfile: ../dockerfiles/migrate_tables/Dockerfile
+      context: backend
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  create_revision:
+    container_name: create_revision
+    restart: no
+    build:
+      dockerfile: ../dockerfiles/create_revision/Dockerfile
+      context: backend
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - ./backend/server/source/database/migrations/versions:/server/source/database/migrations/versions
