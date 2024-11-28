@@ -1,0 +1,18 @@
+alembic==1.14.0
+
+sqlalchemy==2.0.36
+
+psycopg==3.2.3
+psycopg-binary==3.2.3
+
+fastapi[standard]==0.115.5
+uvicorn==0.32.1
+
+pydantic-settings==2.6.1
+pydantic==2.10.2
+
+# sqladmin==0.20.1
+
+# aiohttp==4.0.0a1
+
+# black==24.10.0
