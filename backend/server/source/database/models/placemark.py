@@ -16,4 +16,4 @@ class PlaceMarkORM(Base):
     create_date: Mapped[CreateDate]
     is_active: Mapped[bool] = mapped_column(default=True, server_default="true")
 
-    create_user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))

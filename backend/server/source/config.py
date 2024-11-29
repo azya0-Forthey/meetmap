@@ -7,6 +7,7 @@ from yaml import safe_load
 
 class Server(BaseModel):
     server_port: int
+    access_token_expire_minutes: int
 
 
 class Postgres(BaseModel):
@@ -16,10 +17,14 @@ class Postgres(BaseModel):
     pg_host: str
     pg_port: int
 
+class Secret(BaseModel):
+    secret_key: str
+    algorithm: str
 
 class Settings(BaseModel):
     server: Server
     postgres: Postgres
+    secret: Secret
 
     @property
     def get_psycopg_url(self):
@@ -45,5 +50,6 @@ def load_yaml(*paths: Path) -> dict[str, any]:
 
 settings = Settings.model_validate(load_yaml(
     Path("../config.yaml"),
-    Path("../../db.yaml")
+    Path("../../db.yaml"),
+    Path("../secret.yaml"),
 ))

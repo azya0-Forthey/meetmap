@@ -8,9 +8,9 @@ class PlaceMarkAddDTO(BaseModel):
     description: str | None
     latitude: float
     longitude: float
-    create_user_id: int
 
 class PlaceMarkDTO(PlaceMarkAddDTO):
     id: int
     create_date: datetime
     is_active: bool
+    user_id: int

@@ -1,7 +1,7 @@
 from venv import logger
 
 from pydantic import BaseModel
-from sqlalchemy import select, ColumnElement, insert, update
+from sqlalchemy import select, ColumnElement, insert, update, exists
 from sqlalchemy.exc import IntegrityError, DatabaseError
 from sqlalchemy.orm import Mapped
 
@@ -18,9 +18,18 @@ class Queries:
                 .where(*where)
             )
 
-            result = (await session.execute(query)).scalars().all()
+            try:
+                result = (await session.execute(query)).scalars().all()
+            except DatabaseError as e:
+                logger.warning(f"Error during database 'select': {e.args[1:]}")
+                return []
 
             return [schema.model_validate(_, from_attributes=True) for _ in result]
+
+    @staticmethod
+    async def select_one(orm: type(Base), schema: type(BaseModel), *where: ColumnElement[bool]) -> BaseModel | None:
+        result = await Queries.select(orm, schema, *where)
+        return result[0] if len(result) == 1 else None
 
     @staticmethod
     async def insert[ReturnType](table: type[Base], return_column: Mapped | None = None,
@@ -39,7 +48,7 @@ class Queries:
                 await session.commit()
                 return result
             except DatabaseError as e:
-                logger.warning(f"error during database 'insert': {e.args[1:]}")
+                logger.warning(f"Error during database 'insert': {e.args[1:]}")
                 return None
 
     @staticmethod
@@ -58,5 +67,23 @@ class Queries:
                 await session.commit()
                 return len(result) != 0
             except DatabaseError as e:
-                logger.warning(f"error during database 'update': {e.args[1:]}")
+                logger.warning(f"Error during database 'update': {e.args[1:]}")
+                return False
+
+    @staticmethod
+    async def exists(table: type[Base], *where: ColumnElement[bool]) -> bool:
+        async with async_session_factory() as session:
+            query = (
+                select(exists())
+                .select_from(table)
+                .where(*where)
+            )
+
+            try:
+                result = (await session.execute(query)).scalar_one()
+
+                await session.commit()
+                return result
+            except DatabaseError as e:
+                logger.warning(f"Error during database 'exists': {e.args[1:]}")
                 return False

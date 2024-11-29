@@ -1,6 +1,8 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, HTTPException
+from starlette import status
 
 import database.queries.placemarks as placemarks_db
+from auth.auth import AuthUser
 from schemas.placemark import PlaceMarkDTO, PlaceMarkAddDTO
 
 router = APIRouter(
@@ -8,16 +10,22 @@ router = APIRouter(
     tags=["placemarks"],
 )
 
-@router.get("/", response_model=list[PlaceMarkDTO])
-async def get_placemarks(user_id: int):
-    return await placemarks_db.get_user_placemarks(user_id)
+@router.get("/")
+async def get_placemarks(user: AuthUser) -> list[PlaceMarkDTO]:
+    return await placemarks_db.get_user_placemarks(user.id)
 
-@router.post("/", response_model=int)
-async def create_placemark(placemark: PlaceMarkAddDTO):
+@router.post("/")
+async def create_placemark(user: AuthUser, placemark: PlaceMarkAddDTO) -> int:
     # TODO verify user validity (after auth)
-    return await placemarks_db.add_placemark(placemark)
+    id = await placemarks_db.add_placemark(user.id, placemark)
+    if not id:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST)
+    return id
 
-@router.delete("/", response_model=int)
-async def close_placemark(id: int):
-    # TODO verify user validity (after auth)
-    return await placemarks_db.close_placemark(id)
+
+@router.delete("/")
+async def close_placemark(user: AuthUser, id: int) -> int:
+    id = await placemarks_db.close_placemark(user.id, id)
+    if not id:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST)
+    return id

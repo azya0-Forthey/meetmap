@@ -1,19 +1,19 @@
 import os
 import sys
 
-args = ["server", "postgres", "migrate_tables", "create_revision", "-d"]
+args = ["server", "postgres", "adminer", "migrate_tables", "create_revision", "-d"]
 args_alias = {arg: arg for arg in args}
 args_alias = {**args_alias,
     "pg": args[1],
-    "migrate": args[2],
-    "revision": args[3],
+    "migrate": args[3],
+    "revision": args[4],
     "detach": "-d"
 }
 
 result = ""
 for arg in sys.argv[1:]:
     if arg == "all":
-        result = f"{args[0]} {args[1]} "
+        result = f"{args[0]} {args[1]} {args[2]}"
         continue
     if arg in result:
         continue
