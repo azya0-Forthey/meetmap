@@ -16,3 +16,8 @@ async def get_placemarks(user_id: int):
 async def create_placemark(placemark: PlaceMarkAddDTO):
     # TODO verify user validity (after auth)
     return await placemarks_db.add_placemark(placemark)
+
+@router.delete("/", response_model=int)
+async def close_placemark(id: int):
+    # TODO verify user validity (after auth)
+    return await placemarks_db.close_placemark(id)

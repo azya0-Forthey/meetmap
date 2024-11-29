@@ -13,3 +13,4 @@ class PlaceMarkAddDTO(BaseModel):
 class PlaceMarkDTO(PlaceMarkAddDTO):
     id: int
     create_date: datetime
+    is_active: bool
