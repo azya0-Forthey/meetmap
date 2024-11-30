@@ -16,6 +16,8 @@ services:
       interval: 1s
       timeout: 5s
       retries: 10
+    volumes:
+      - pg_data:/var/lib/postgresql/data
 
   server:
     env_file:
@@ -65,3 +67,6 @@ services:
         condition: service_healthy
     volumes:
       - ./backend/server/source/database/migrations/versions:/server/source/database/migrations/versions
+
+volumes:
+  pg_data:

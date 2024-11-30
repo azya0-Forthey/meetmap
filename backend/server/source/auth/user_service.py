@@ -1,6 +1,8 @@
+import logging
 from typing import Annotated
 
 from fastapi import Depends, HTTPException
+from fastapi.security import OAuth2PasswordBearer
 from jwt import InvalidTokenError
 from starlette import status
 
@@ -9,6 +11,8 @@ from auth.hashing import verify_pwd
 
 import database.queries.user as users_db
 from schemas.user import UserDTO
+
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/users/login")
 
 
 class UserService:
@@ -27,7 +31,7 @@ class UserService:
         )
         return tokens
 
-    async def get_current(self, token: str):
+    async def get_current(self, token: Annotated[str, Depends(oauth2_scheme)]):
         credentials_exception = HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Could not validate credentials",
@@ -51,19 +55,16 @@ class UserService:
         # TODO удалять refresh токен из из бд в token_service (Redis)
         return True
 
-    async def refresh(self, user: UserDTO, token: str) -> Token:
+    async def refresh(self, token: str) -> Token:
         # TODO проверять валидность refresh токена - через бд в token_service (Redis)
         # TODO обновлять данные юзера из бд (Postgres) - на случай, если в токене устаревшие
         try:
-            token_service.decode_refresh_token(token)
+            payload = token_service.decode_refresh_token(token)
             tokens: Token = token_service.generate_tokens(
-                payload={
-                    "id": user.id,
-                    "username": user.username,
-                },
+                payload=payload
             )
             return tokens
-        except InvalidTokenError:
+        except InvalidTokenError as e:
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="Could not validate credentials",
