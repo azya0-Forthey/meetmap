@@ -1,14 +1,13 @@
-from datetime import timedelta
 from typing import Annotated
 
 from fastapi import APIRouter, HTTPException, Depends, Response
+from fastapi.params import Cookie
 from fastapi.security import OAuth2PasswordRequestForm
-from sqlalchemy.util import await_only
 from starlette import status
 
 import database.queries.user as user_db
-import auth.auth as auth
 from auth.token_service import token_service, Token
+from auth.user_service import user_service, AuthUser
 from config import settings
 from schemas.user import UserAddDTO, UserLoginDTO, UserDTO, UserSecureDTO
 
@@ -19,25 +18,19 @@ router = APIRouter(
 
 
 @router.get("/me")
-async def get_user_info(user: auth.AuthUser) -> UserSecureDTO:
+async def get_user_info(user: AuthUser) -> UserSecureDTO:
     return user
 
 
 @router.post("/login")
-async def login_user(form: Annotated[OAuth2PasswordRequestForm, Depends()], response: Response) -> Token:
-    user = await auth.authenticate_user(form.username, form.password)
-    if not user:
+async def login_user(user: UserLoginDTO, response: Response) -> Token:
+    tokens = await user_service.login(user.username, user.password)
+    if not tokens:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Incorrect username or password",
             headers={"WWW-Authenticate": "Bearer"},
         )
-    tokens: Token = token_service.generate_tokens(
-        payload={
-            "id": user.id,
-            "username": user.username,
-        },
-    )
     response.set_cookie("refresh_token", tokens.refresh_token,
                         max_age=settings.tokens.access_token_expire_minutes * 60 * 1000, httponly=True)
     return tokens
@@ -52,3 +45,15 @@ async def register_user(user: UserAddDTO) -> int:
             detail="User already exists"
         )
     return user_id
+
+@router.post("/logout")
+async def logout_user(refresh_token: Annotated[str, Cookie()], response: Response):
+    await user_service.logout(refresh_token)
+    response.delete_cookie("refresh_token")
+
+@router.post("/refresh")
+async def refresh_user(user: AuthUser, refresh_token: Annotated[str, Cookie()], response: Response) -> Token:
+    tokens = await user_service.refresh(user, refresh_token)
+    response.set_cookie("refresh_token", tokens.refresh_token,
+                        max_age=settings.tokens.access_token_expire_minutes * 60 * 1000, httponly=True)
+    return tokens

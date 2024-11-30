@@ -2,7 +2,7 @@ from fastapi import APIRouter, HTTPException
 from starlette import status
 
 import database.queries.placemarks as placemarks_db
-from auth.auth import AuthUser
+from auth.user_service import AuthUser
 from schemas.placemark import PlaceMarkDTO, PlaceMarkAddDTO
 
 router = APIRouter(
@@ -16,7 +16,6 @@ async def get_placemarks(user: AuthUser) -> list[PlaceMarkDTO]:
 
 @router.post("/")
 async def create_placemark(user: AuthUser, placemark: PlaceMarkAddDTO) -> int:
-    # TODO verify user validity (after auth)
     placemark_id = await placemarks_db.add_placemark(user.id, placemark)
     if not placemark_id:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST)

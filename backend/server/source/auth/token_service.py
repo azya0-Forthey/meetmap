@@ -29,7 +29,7 @@ class TokenService:
     def _parse_payload(self, payload: dict, expire_time: timedelta) -> dict:
         to_encode = payload.copy()
         exp_time = datetime.now(timezone.utc) + expire_time
-        to_encode.update({"expires_in": exp_time.isoformat()})
+        to_encode.update({"exp": exp_time.isoformat()})
         return to_encode
 
     def _create_access_token(self, payload: dict) -> str:
