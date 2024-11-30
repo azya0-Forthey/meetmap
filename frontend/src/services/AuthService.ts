@@ -19,6 +19,6 @@ export default class AuthService {
     }
 
     static async me(): Promise<AxiosResponse<User>> {
-        return $api.post<User>("/users/me")
+        return $api.get<User>("/users/me")
     }
 }
