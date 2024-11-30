@@ -25,7 +25,7 @@ else:
 result = ""
 for arg in sys.argv[2:]:
     if arg == "all":
-        result = f"{args[0]} {args[1]} {args[2]}"
+        result = f"{args[0]} {args[1]} {args[2]} "
         continue
     if arg in result:
         continue
