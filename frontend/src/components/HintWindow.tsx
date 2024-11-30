@@ -1,3 +1,5 @@
+import "../styles/HintWindow.css"
+
 import {useContext} from "react";
 import {YMapHintContext} from "../lib/ymaps";
 

@@ -7,6 +7,9 @@
     "react-dom": "latest",
     "react-scripts": "latest",
     "typescript": "latest",
+    "axios": "^1.7.8",
+    "mobx-react-lite": "^4.0.7",
+    "react-router-dom": "^7.0.1",
     "@yandex/ymaps3-default-ui-theme": "^0.0.18"
   },
   "scripts": {
