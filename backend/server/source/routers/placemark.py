@@ -17,15 +17,15 @@ async def get_placemarks(user: AuthUser) -> list[PlaceMarkDTO]:
 @router.post("/")
 async def create_placemark(user: AuthUser, placemark: PlaceMarkAddDTO) -> int:
     # TODO verify user validity (after auth)
-    id = await placemarks_db.add_placemark(user.id, placemark)
-    if not id:
+    placemark_id = await placemarks_db.add_placemark(user.id, placemark)
+    if not placemark_id:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST)
-    return id
+    return placemark_id
 
 
 @router.delete("/")
-async def close_placemark(user: AuthUser, id: int) -> int:
-    id = await placemarks_db.close_placemark(user.id, id)
-    if not id:
+async def close_placemark(user: AuthUser, placemark_id: int) -> int:
+    placemark_id = await placemarks_db.close_placemark(user.id, placemark_id)
+    if not placemark_id:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST)
-    return id
+    return placemark_id

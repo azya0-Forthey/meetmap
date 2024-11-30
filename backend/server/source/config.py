@@ -7,8 +7,6 @@ from yaml import safe_load
 
 class Server(BaseModel):
     server_port: int
-    access_token_expire_minutes: int
-
 
 class Postgres(BaseModel):
     pg_user: str
@@ -17,14 +15,17 @@ class Postgres(BaseModel):
     pg_host: str
     pg_port: int
 
-class Secret(BaseModel):
-    secret_key: str
+class Tokens(BaseModel):
+    access_secret_key: str
+    refresh_secret_key: str
     algorithm: str
+    access_token_expire_minutes: int
+    refresh_token_expire_minutes: int
 
 class Settings(BaseModel):
     server: Server
     postgres: Postgres
-    secret: Secret
+    tokens: Tokens
 
     @property
     def get_psycopg_url(self):
