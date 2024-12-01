@@ -34,6 +34,6 @@ for arg in sys.argv[2:]:
         exit(0)
     result += args_alias[arg] + " "
 try:
-    os.system(f"docker-compose --env-file backend/db.yaml --env-file .env {base_command} {result}")
+    os.system(f"docker compose --env-file backend/db.yaml --env-file .env {base_command} {result}")
 except KeyboardInterrupt:
     exit(0)
