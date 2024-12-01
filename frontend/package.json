@@ -12,7 +12,10 @@
     "@yandex/ymaps3-default-ui-theme": "^0.0.18"
   },
   "scripts": {
-    "start": "react-scripts start"
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
   },
   "browserslist": {
     "production": [
