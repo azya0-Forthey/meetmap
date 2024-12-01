@@ -13,10 +13,14 @@ app = FastAPI(
 )
 
 origins = [
-    "http://79.137.204.11"
     "http://79.137.204.11:80",
     "http://79.137.204.11:443",
+    "http://localhost:80"
+    "http://localhost:443"
 ]
+
+app.include_router(placemark.router)
+app.include_router(user.router)
 
 app.add_middleware(
     CORSMiddleware,
@@ -25,6 +29,3 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
-app.include_router(placemark.router)
-app.include_router(user.router)
