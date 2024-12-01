@@ -1,16 +1,14 @@
-FROM node:22.11-slim
+FROM node:18.20.2-alpine
 
 WORKDIR frontend
 
-COPY ./frontend/package.json package.json
+COPY ./frontend/package.json ./frontend/package-lock.json ./
 
-RUN yarn --only=prod --loglevel verbose
+RUN npm install --only prod --loglevel verbose
 
 COPY ./frontend .
 
 RUN npm run build
-
-EXPOSE 3000
 
 RUN npm install -g serve --loglevel verbose
 
