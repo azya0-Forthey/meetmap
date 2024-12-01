@@ -40,7 +40,7 @@ async def login_user(user: UserLoginDTO, response: Response) -> Token:
 @router.post("/register")
 async def register_user(user: UserAddDTO) -> int:
     user_id = await user_db.register_user(user)
-    if not id:
+    if not user_id:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="User already exists"
