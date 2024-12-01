@@ -1,3 +1,4 @@
+import logging
 from typing import Annotated
 
 from fastapi import APIRouter, HTTPException, Depends, Response
@@ -29,7 +30,7 @@ async def login_user(user: UserLoginDTO, response: Response) -> Token:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Incorrect username or password",
-            headers={"WWW-Authenticate": "Bearer"},
+            headers={"Authorization": "Bearer"},
         )
     response.set_cookie("refresh_token", tokens.refresh_token,
                         max_age=settings.tokens.access_token_expire_minutes * 60 * 1000, httponly=True)
@@ -51,9 +52,9 @@ async def logout_user(refresh_token: Annotated[str, Cookie()], response: Respons
     await user_service.logout(refresh_token)
     response.delete_cookie("refresh_token")
 
-@router.post("/refresh")
-async def refresh_user(user: AuthUser, refresh_token: Annotated[str, Cookie()], response: Response) -> Token:
-    tokens = await user_service.refresh(user, refresh_token)
+@router.get("/refresh")
+async def refresh_user(refresh_token: Annotated[str, Cookie()], response: Response) -> Token:
+    tokens = await user_service.refresh(refresh_token)
     response.set_cookie("refresh_token", tokens.refresh_token,
                         max_age=settings.tokens.access_token_expire_minutes * 60 * 1000, httponly=True)
     return tokens
