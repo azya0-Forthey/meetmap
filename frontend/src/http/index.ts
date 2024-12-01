@@ -2,7 +2,8 @@ import axios from "axios";
 import {AuthResponse} from "../models/response/AuthResponse";
 import AuthService from "../services/AuthService";
 
-export const API_URL = `http://79.137.204.11:443`
+// export const API_URL = `http://79.137.204.11:443`
+export const API_URL = `http://localhost:443`
 
 const $api = axios.create({
     withCredentials: true,
