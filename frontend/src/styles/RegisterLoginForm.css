@@ -1,0 +1,96 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f0f0f0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+
+.form-container {
+    background-color: #ffffff;
+    width: 400px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+.form-header {
+    display: flex;
+    justify-content: space-around;
+    background-color: #e0e0e0;
+    padding: 10px 0;
+}
+
+.form-toggle {
+    border: none;
+    background: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-size: 16px;
+    color: #666;
+    transition: color 0.3s, background-color 0.3s;
+}
+
+.form-toggle.active {
+    color: #fff;
+    background-color: #333;
+    border-radius: 5px;
+}
+
+.form {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.form h2 {
+    margin: 0;
+    color: #333;
+}
+
+.form input {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+.form-submit {
+    padding: 10px;
+    background-color: #333;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s;
+}
+
+.form-submit:hover {
+    background-color: #555;
+}
+
+.home-button {
+    margin: 20px auto;
+    display: block;
+    padding: 10px;
+    background-color: #666;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s;
+}
+
+.home-button:hover {
+    background-color: #333;
+}
+
+a {
+    color: #fff;
+    text-decoration: none
+}
