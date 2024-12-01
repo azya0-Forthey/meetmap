@@ -3,6 +3,17 @@ version: '3.9'
 name: meetmap
 
 services:
+  frontend:
+    container_name: frontend
+    build:
+      dockerfile: ./dockerfiles/frontend/Dockerfile
+      context: .
+    environment:
+      - PORT=${REACT_CLIENT_PORT}
+    restart: always
+    ports:
+      - ${REACT_CLIENT_PORT}:${REACT_CLIENT_PORT}
+
   postgres:
     container_name: postgres
     image: postgres
@@ -20,17 +31,15 @@ services:
       - pg_data:/var/lib/postgresql/data
 
   server:
-    env_file:
-      - backend/server/config.yaml
     container_name: server
     build:
       dockerfile: ../dockerfiles/server/Dockerfile
       context: backend
     restart: always
     environment:
-      - PORT=${server_port}
+      - PORT=${SERVER_PORT}
     ports:
-      - "${server_port}:${server_port}"
+      - "${SERVER_PORT}:${SERVER_PORT}"
     depends_on:
       postgres:
         condition: service_healthy

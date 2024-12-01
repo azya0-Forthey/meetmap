@@ -15,8 +15,8 @@ COPY server /server
 WORKDIR /server/source
 
 #CMD ["fastapi", "run", "main.py", "--port", "8080", "--workers", "4", "--host", "0.0.0.0"]
-CMD ["fastapi", "dev", "main.py", "--port", "8080", "--host", "0.0.0.0"]
-
+# CMD ["fastapi", "dev", "main.py", "--port", "8080", "--host", "0.0.0.0"]
+CMD fastapi dev main.py --port ${PORT} --host 0.0.0.0
 
 # RUN echo 'ping localhost &' > /bootstrap.sh
 # RUN echo 'sleep infinity' >> /bootstrap.sh

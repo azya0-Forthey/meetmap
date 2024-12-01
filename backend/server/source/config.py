@@ -5,9 +5,6 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 from yaml import safe_load
 
 
-class Server(BaseModel):
-    server_port: int
-
 class Postgres(BaseModel):
     pg_user: str
     pg_name: str
@@ -23,7 +20,6 @@ class Tokens(BaseModel):
     refresh_token_expire_minutes: int
 
 class Settings(BaseModel):
-    server: Server
     postgres: Postgres
     tokens: Tokens
 
@@ -50,7 +46,6 @@ def load_yaml(*paths: Path) -> dict[str, any]:
 
 
 settings = Settings.model_validate(load_yaml(
-    Path("../config.yaml"),
     Path("../../db.yaml"),
     Path("../secret.yaml"),
 ))
