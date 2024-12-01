@@ -1,12 +1,17 @@
 FROM node:22.11-slim
 
-WORKDIR /frontend
+WORKDIR frontend
 
-COPY frontend/package.json .
-COPY frontend/package-lock.json .
+COPY ./frontend/package.json package.json
 
-RUN npm install
+RUN yarn --only=prod --loglevel verbose
 
-COPY frontend /frontend
+COPY ./frontend .
 
-CMD npm start
+RUN npm run build
+
+EXPOSE 3000
+
+RUN npm install -g serve --loglevel verbose
+
+CMD ["serve", "-s", "build"]
