@@ -1,12 +1,19 @@
-import React, {useCallback, useEffect, useState} from 'react';
-import {LngLat, YMapLocationRequest} from "ymaps3";
+import React, {MouseEventHandler, useCallback, useEffect, useState} from 'react';
+import {Config, DomEventHandlerObject, LngLat, MapEventUpdateHandler, YMapLocationRequest} from "ymaps3";
 import useWindowDimensions from "../lib/get_window_size";
-import {YMap, YMapDefaultFeaturesLayer, YMapDefaultMarker, YMapDefaultSchemeLayer, YMapHint} from "../lib/ymaps";
+import {
+    YMap,
+    YMapDefaultFeaturesLayer,
+    YMapDefaultMarker,
+    YMapDefaultSchemeLayer,
+    YMapHint,
+    YMapListener
+} from "../lib/ymaps";
 import HintWindow from "./HintWindow";
 import NavigationBar from "./NavigationBar";
+import UserPlaceMarks from "./UserPlaceMarks";
 
 function Map() {
-    const getHint = useCallback((object) => object?.properties?.hint, []);
     const [markerSource, setMarkerSource] = useState<PlaceMark[]>([])
 
     useEffect(() => {
@@ -37,33 +44,7 @@ function Map() {
             <YMap location={defaultLoc} theme="dark">
                 <YMapDefaultSchemeLayer/>
                 <YMapDefaultFeaturesLayer/>
-
-                {/*@ts-ignore */}
-                <YMapHint hint={getHint}>
-                    <HintWindow/>
-                </YMapHint>
-                {
-                    markerSource.map((placeMark, index) => {
-                        const markerProps = {
-                            coordinates: [placeMark.latitude, placeMark.longitude] as LngLat,
-                            title: placeMark.name,
-                            subtitle: placeMark.description,
-                            color: 'lavender',
-                            size: 'normal',
-                            iconName: 'fallback',
-                            properties: {
-                                hint: {
-                                    title: placeMark.name,
-                                    text: placeMark.description,
-                                    time: placeMark.create_date
-                                }
-                            }
-                        }
-                        // @ts-ignore
-                        return <YMapDefaultMarker key={index} data-index={index} {...markerProps}
-                                                  onClick={() => alertInfo(index)}/>
-                    })
-                }
+                <UserPlaceMarks/>
             </YMap>
         </div>
     );

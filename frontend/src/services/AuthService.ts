@@ -15,7 +15,8 @@ export default class AuthService {
     }
 
     static async logout(): Promise<void> {
-        return $api.post("/logout")
+        localStorage.removeItem("token");
+        return $api.post("/users/logout")
     }
 
     static async me(): Promise<AxiosResponse<User>> {

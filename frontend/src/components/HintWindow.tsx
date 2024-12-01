@@ -1,6 +1,6 @@
 import "../styles/HintWindow.css"
 
-import {useContext} from "react";
+import {useContext, useEffect} from "react";
 import {YMapHintContext} from "../lib/ymaps";
 
 export default function HintWindow() {
@@ -11,6 +11,7 @@ export default function HintWindow() {
             time: Date
         };
     };
+
     return (
         hintContext && (
             <div className="hint_window">
@@ -23,7 +24,7 @@ export default function HintWindow() {
                     hour: '2-digit',
                     minute: '2-digit',
                     second: '2-digit'
-                }).format(hintContext.hint.time)}</div>
+                }).format(new Date(hintContext.hint.time))}</div>
             </div>
         )
     );
