@@ -19,13 +19,13 @@ origins = [
     "http://localhost:443"
 ]
 
-app.include_router(placemark.router)
-app.include_router(user.router)
-
 app.add_middleware(
     CORSMiddleware,
-    # allow_origins=origins,
+    allow_origins=["null"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+app.include_router(placemark.router)
+app.include_router(user.router)
