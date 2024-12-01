@@ -5,10 +5,8 @@ from sqlalchemy import pool
 
 from alembic import context
 
-from config import settings
-from database.database import Base
-from database.models.placemark import PlaceMarkORM
-from database.models.user import UserORM
+from source.config import settings
+from source.database.database import Base
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.

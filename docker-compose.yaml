@@ -9,21 +9,23 @@ services:
       dockerfile: ./dockerfiles/frontend/Dockerfile
       context: .
     environment:
-      - PORT=${REACT_CLIENT_PORT}
+      - PORT=${FRONTEND_PORT}
     restart: always
     ports:
-      - ${REACT_CLIENT_PORT}:${REACT_CLIENT_PORT}
+      - ${FRONTEND_PORT}:${FRONTEND_PORT}
 
   postgres:
     container_name: postgres
     image: postgres
     restart: always
     environment:
-      - POSTGRES_DB=${pg_name}
-      - POSTGRES_USER=${pg_user}
-      - POSTGRES_PASSWORD=${pg_password}
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    ports:
+      - "${POSTGRES_PORT}:${POSTGRES_PORT}"
     healthcheck:
-      test: ["CMD-SHELL", "sh -c 'pg_isready -U ${pg_user}'"]
+      test: ["CMD-SHELL", "sh -c 'pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}'"]
       interval: 1s
       timeout: 5s
       retries: 10
@@ -36,13 +38,14 @@ services:
       dockerfile: ../dockerfiles/server/Dockerfile
       context: backend
     restart: always
-    environment:
-      - PORT=${SERVER_PORT}
+    env_file:
+      - .env
     ports:
       - "${SERVER_PORT}:${SERVER_PORT}"
     depends_on:
       postgres:
         condition: service_healthy
+    command: bash -c "alembic upgrade head && cd source && uvicorn main:app --host 0.0.0.0 --port ${SERVER_PORT}"
 
   adminer:
     image: adminer
@@ -54,28 +57,6 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
-
-  migrate_tables:
-    container_name: migrate_tables
-    restart: no
-    build:
-      dockerfile: ../dockerfiles/migrate_tables/Dockerfile
-      context: backend
-    depends_on:
-      postgres:
-        condition: service_healthy
-
-  create_revision:
-    container_name: create_revision
-    restart: no
-    build:
-      dockerfile: ../dockerfiles/create_revision/Dockerfile
-      context: backend
-    depends_on:
-      postgres:
-        condition: service_healthy
-    volumes:
-      - ./backend/server/source/database/migrations/versions:/server/source/database/migrations/versions
 
 volumes:
   pg_data:
