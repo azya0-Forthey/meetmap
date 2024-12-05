@@ -1,9 +1,9 @@
 from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker, AsyncSession
 
-from config import settings
+from config import get_settings
 
 async_engine = create_async_engine(
-    url=settings.get_psycopg_url,
+    url=get_settings().postgres.SQLALCHEMY_URL,
     echo=False,
     pool_size=5,
     max_overflow=10

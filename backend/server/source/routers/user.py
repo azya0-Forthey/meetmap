@@ -9,13 +9,15 @@ from starlette import status
 import database.queries.user as user_db
 from auth.token_service import token_service, Token
 from auth.user_service import user_service, AuthUser
-from config import settings
+from config import get_settings
 from schemas.user import UserAddDTO, UserLoginDTO, UserDTO, UserSecureDTO
 
 router = APIRouter(
     prefix="/users",
     tags=["users"],
 )
+
+settings = get_settings()
 
 
 @router.get("/me")

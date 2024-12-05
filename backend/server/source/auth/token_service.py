@@ -3,7 +3,10 @@ from datetime import timedelta, datetime, timezone
 import jwt
 from pydantic import BaseModel
 
-from config import settings
+from config import get_settings
+
+
+settings = get_settings()
 
 
 class Token(BaseModel):
