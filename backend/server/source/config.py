@@ -53,9 +53,8 @@ class Postgres(BaseSettings):
         if isinstance(value, str):
             return value
 
-        # TODO change psycopg to asyncpg
         return str(PostgresDsn.build(
-            scheme='postgresql+psycopg',
+            scheme='postgresql+asyncpg',
             username=info.data["POSTGRES_USER"],
             password=info.data["POSTGRES_PASSWORD"],
             host=info.data["POSTGRES_HOST"],
