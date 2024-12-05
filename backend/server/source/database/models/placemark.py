@@ -1,5 +1,6 @@
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column
+from geoalchemy2 import Geometry
 
 from database.database import Base, IntPrimKey, CreateDate
 
@@ -11,8 +12,8 @@ class PlaceMarkORM(Base):
 
     name: Mapped[str]
     description: Mapped[str]
-    latitude: Mapped[float]
-    longitude: Mapped[float]
+    position: Mapped[Geometry] = mapped_column(Geometry(geometry_type='POINT', srid=4326))
+    
     create_date: Mapped[CreateDate]
     is_active: Mapped[bool] = mapped_column(default=True, server_default="true")
 

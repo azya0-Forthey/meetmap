@@ -16,7 +16,7 @@ services:
 
   postgres:
     container_name: postgres
-    image: postgres
+    image: postgis/postgis:17-3.5-alpine
     restart: always
     environment:
       - POSTGRES_DB=${POSTGRES_DB}
@@ -32,6 +32,18 @@ services:
     volumes:
       - pg_data:/var/lib/postgresql/data
 
+  migrate_tables:
+    container_name: migrate_tables
+    restart: no
+    env_file:
+      - .env
+    build:
+      dockerfile: ../dockerfiles/migrate_tables/Dockerfile
+      context: backend
+    depends_on:
+      postgres:
+        condition: service_healthy
+
   server:
     container_name: server
     build:
@@ -45,7 +57,7 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
-    command: bash -c "alembic upgrade head && cd source && uvicorn main:app --host 0.0.0.0 --port ${SERVER_PORT}"
+    command: bash -c "uvicorn main:app --host 0.0.0.0 --port ${SERVER_PORT}"
 
   adminer:
     image: adminer

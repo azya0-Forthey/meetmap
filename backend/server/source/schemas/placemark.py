@@ -9,6 +9,7 @@ class PlaceMarkAddDTO(BaseModel):
     latitude: float
     longitude: float
 
+
 class PlaceMarkDTO(PlaceMarkAddDTO):
     id: int
     create_date: datetime

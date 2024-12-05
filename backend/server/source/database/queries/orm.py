@@ -11,7 +11,7 @@ from database.engine import async_session_factory
 
 class Queries:
     @staticmethod
-    async def select(orm: type(Base), schema: type(BaseModel), *where: ColumnElement[bool]) -> list[BaseModel]:
+    async def select(orm: type[Base], schema: type[BaseModel], *where: ColumnElement[bool]) -> list[BaseModel]:
         async with async_session_factory() as session:
             query = (
                 select(orm)
@@ -27,7 +27,7 @@ class Queries:
             return [schema.model_validate(_, from_attributes=True) for _ in result]
 
     @staticmethod
-    async def select_one(orm: type(Base), schema: type(BaseModel), *where: ColumnElement[bool]) -> BaseModel | None:
+    async def select_one(orm: type[Base], schema: type[BaseModel], *where: ColumnElement[bool]) -> BaseModel | None:
         result = await Queries.select(orm, schema, *where)
         return result[0] if len(result) == 1 else None
 

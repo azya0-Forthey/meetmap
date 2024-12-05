@@ -1,4 +1,5 @@
 from sqlalchemy import and_
+from shapely import Point
 
 from database.models.placemark import PlaceMarkORM
 from database.queries import orm
@@ -10,7 +11,10 @@ async def get_user_placemarks(user_id: int) -> list[PlaceMarkDTO]:
 
 
 async def add_placemark(user_id: int, placemark: PlaceMarkAddDTO) -> int | None:
-    return await orm.Queries.insert(PlaceMarkORM, PlaceMarkORM.id, user_id=user_id, **placemark.model_dump())
+    dumped_model = placemark.model_dump()
+    dumped_model['positiot'] = Point(dumped_model.pop("latitude"), dumped_model.pop("longitude"))
+
+    return await orm.Queries.insert(PlaceMarkORM, PlaceMarkORM.id, user_id=user_id, **dumped_model)
 
 
 async def change_placemark_state(user_id: int, placemark_id: int, is_active: bool) -> int | None:
