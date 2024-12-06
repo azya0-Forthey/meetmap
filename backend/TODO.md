@@ -11,3 +11,13 @@
 3. ~~Протестировать~~
 4. Добавить функцию ближайших точек
 5. Переделать фронтенд
+
+**Важно для тестов:**
+
+```
+SELECT name, position, ST_DistanceSphere(
+  ST_GeomFromText('SRID=4326;POINT(30.458583 60.066742)'),
+  position
+) / 1000 AS distance
+FROM placemarks
+```

@@ -3,7 +3,7 @@ from starlette import status
 
 import database.queries.placemarks as placemarks_db
 from auth.user_service import AuthUser
-from schemas.placemark import PlaceMarkDTO, PlaceMarkAddDTO
+from schemas.placemark import PlaceMarkBase, PlaceMarkDTO, PlaceMarkAddDTO
 
 router = APIRouter(
     prefix="/placemarks",
@@ -28,3 +28,8 @@ async def close_placemark(user: AuthUser, placemark_id: int) -> int:
     if not placemark_id:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST)
     return placemark_id
+
+
+@router.post("/closests")
+async def closest_placemarks(user: AuthUser, mark: PlaceMarkBase, radius: float) -> list[PlaceMarkAddDTO]:
+    return await placemarks_db.closest_placemarks(mark, radius)

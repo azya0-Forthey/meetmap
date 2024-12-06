@@ -2,10 +2,13 @@ from venv import logger
 from typing import Callable
 
 from pydantic import BaseModel
-from sqlalchemy import select, ColumnElement, insert, update, exists
+from sqlalchemy import select, ColumnElement, insert, update, exists, func
 from sqlalchemy.exc import IntegrityError, DatabaseError
 from sqlalchemy.orm import Mapped
+from geoalchemy2.shape import to_shape
 
+from database.models.placemark import PlaceMarkORM
+from schemas.placemark import PlaceMarkBase, PlaceMarkDTO
 from database.database import Base
 from database.engine import async_session_factory
 
@@ -106,3 +109,33 @@ class Queries:
             except DatabaseError as e:
                 logger.warning(f"Error during database 'exists': {e.args[1:]}")
                 return False
+    
+    @staticmethod
+    async def closest(mark: PlaceMarkBase, radius: float) -> list[PlaceMarkDTO]:
+        """
+        :param: radius Радиус в метрах
+        """
+        point = func.ST_GeomFromText(f'SRID=4326;POINT({mark.longitude} {mark.latitude})')
+
+        query = select(PlaceMarkORM).where(func.ST_DistanceSphere(
+            PlaceMarkORM.position, point
+        ) <= radius)
+
+        async with async_session_factory() as session:
+            try:
+                pre_result = (await session.execute(query)).scalars().all()
+
+            except DatabaseError as error:
+                logger.warning(f"Error during database 'closest': {error}")
+        
+        result = []
+
+        for obj in pre_result:
+            coords = to_shape(obj.position)
+
+            obj.latitude = coords.x
+            obj.longitude = coords.y
+
+            result.append(PlaceMarkDTO.model_validate(obj, from_attributes=True))
+        
+        return result

@@ -26,9 +26,9 @@ function AddPlaceMark() {
                    onChange={(e) => setName(e.target.value)}/>
             <input type="test" placeholder="Описание" required
                    onChange={(e) => setDescription(e.target.value)}/>
-            <input type="number" placeholder="Широта (37.588144)" required
+            <input type="number" placeholder="Широта (55.733842)" required
                    onChange={(e) => setLatitude(Number(e.target.value))}/>
-            <input type="number" placeholder="Долгота (55.733842)" required
+            <input type="number" placeholder="Долгота (37.588144)" required
                    onChange={(e) => setLongitude(Number(e.target.value))}/>
             <button className="form-submit"
                     onClick={() => addPlaceMark()}>

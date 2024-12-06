@@ -3,7 +3,12 @@ from datetime import datetime
 from pydantic import BaseModel
 
 
-class PlaceMarkAddDTO(BaseModel):
+class PlaceMarkBase(BaseModel):
+    latitude: float
+    longitude: float
+
+
+class PlaceMarkAddDTO(PlaceMarkBase):
     name: str
     description: str | None
     latitude: float
