@@ -1,4 +1,5 @@
 from venv import logger
+from typing import Callable
 
 from pydantic import BaseModel
 from sqlalchemy import select, ColumnElement, insert, update, exists
@@ -27,13 +28,32 @@ class Queries:
             return [schema.model_validate(_, from_attributes=True) for _ in result]
 
     @staticmethod
+    async def select_with_function(orm: type[Base], schema: type[BaseModel], function: Callable[[Base], Base], *where: ColumnElement[bool]) -> list[BaseModel]:
+        async with async_session_factory() as session:
+            query = (
+                select(orm)
+                .where(*where)
+            )
+
+            try:
+                result = (await session.execute(query)).scalars().all()
+            except DatabaseError as e:
+                logger.warning(f"Error during database 'select': {e.args[1:]}")
+                return []
+
+            return [schema.model_validate(function(obj), from_attributes=True) for obj in result]
+
+
+    @staticmethod
     async def select_one(orm: type[Base], schema: type[BaseModel], *where: ColumnElement[bool]) -> BaseModel | None:
         result = await Queries.select(orm, schema, *where)
         return result[0] if len(result) == 1 else None
 
     @staticmethod
-    async def insert[ReturnType](table: type[Base], return_column: Mapped | None = None,
-                                 **data) -> ReturnType | None:
+    async def insert[ReturnType](
+        table: type[Base], return_column: Mapped | None = None, **data
+        ) -> ReturnType | None:
+
         async with async_session_factory() as session:
             query = (
                 insert(table)
@@ -48,7 +68,7 @@ class Queries:
                 await session.commit()
                 return result
             except DatabaseError as e:
-                logger.warning(f"Error during database 'insert': {e.args[1:]}")
+                logger.warning(f"Error during database 'insert': {e.args}")
                 return None
 
     @staticmethod
