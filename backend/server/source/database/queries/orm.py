@@ -43,7 +43,6 @@ class Queries:
 
             return [schema.model_validate(function(obj), from_attributes=True) for obj in result]
 
-
     @staticmethod
     async def select_one(orm: type[Base], schema: type[BaseModel], *where: ColumnElement[bool]) -> BaseModel | None:
         result = await Queries.select(orm, schema, *where)
