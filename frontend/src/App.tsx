@@ -10,7 +10,8 @@ import AddPlaceMark from "./components/AddPlaceMark";
 import Logout from "./components/Logout";
 
 function App() {
-    const {store} = useContext(Context)
+    const {store} = useContext(Context);
+
     useEffect(() => {
         if (localStorage.getItem("token")) {
             store.checkAuth()

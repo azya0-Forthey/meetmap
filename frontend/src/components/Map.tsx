@@ -3,7 +3,8 @@ import useWindowDimensions from "../lib/get_window_size";
 import {YMap, YMapDefaultFeaturesLayer, YMapDefaultSchemeLayer} from "../lib/ymaps";
 import NavigationBar from "./NavigationBar";
 import UserPlaceMarks from "./UserPlaceMarks";
-import type {LngLatBounds, ZoomRange} from '@yandex/ymaps3-types';
+import type {LngLatBounds, ZoomRange, VectorCustomization} from '@yandex/ymaps3-types';
+import {mapStyle} from '../styles/mapStyle';
 
 
 function Map() {
@@ -22,11 +23,13 @@ function Map() {
         max: 20
     };
 
+    console.log(document.querySelector(".ymaps3x0--map-copyrights"));
+
     return (
         <div style={useWindowDimensions()}>
             <NavigationBar />
-            <YMap location={defaultLoc} restrictMapArea={RESTRICT_AREA} zoomRange={ZOOM_AREA} theme="dark">
-                <YMapDefaultSchemeLayer/>
+            <YMap location={defaultLoc} restrictMapArea={RESTRICT_AREA} zoomRange={ZOOM_AREA}>
+                <YMapDefaultSchemeLayer theme="dark" customization={mapStyle}/>
                 <YMapDefaultFeaturesLayer/>
                 <UserPlaceMarks/>
             </YMap>
