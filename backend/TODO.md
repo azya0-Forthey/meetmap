@@ -21,3 +21,21 @@ SELECT name, position, ST_DistanceSphere(
 ) / 1000 AS distance
 FROM placemarks
 ```
+
+const getHint = useCallback((object) => object?.properties?.hint, []);
+    const [placeMarks, setPlaceMarks] = useState([]);
+    const {store} = useContext(Context);
+
+    useEffect(() => {
+        if (!store.isAuth) {
+            return;
+        }
+
+        PLaceMarksService.getUserPlaceMarks(
+        ).then(response => {setPlaceMarks(response.data)});
+    });
+
+    {/*@ts-ignore */}
+            <YMapHint hint={getHint}>
+                <HintWindow/>
+            </YMapHint>

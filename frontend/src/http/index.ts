@@ -1,19 +1,17 @@
 import axios from "axios";
 import {AuthResponse} from "../models/response/AuthResponse";
-import AuthService from "../services/AuthService";
 
-// export const API_URL = `http://79.137.204.11:443`
 export const API_URL = `http://localhost:443`
 
 const $api = axios.create({
     withCredentials: true,
     baseURL: API_URL,
-})
+});
 
 $api.interceptors.request.use((config) => {
     config.headers.Authorization = `Bearer ${localStorage.getItem("token")}`
     return config;
-})
+});
 
 $api.interceptors.response.use((config) => {
     return config;
@@ -30,6 +28,6 @@ $api.interceptors.response.use((config) => {
         }
     }
     throw error;
-})
+});
 
 export default $api;

@@ -5,7 +5,6 @@ import {Context} from "../index";
 import {observer} from "mobx-react-lite"
 
 function NavigationBar() {
-    const [isOpen, setIsOpen] = useState(false);
     const {store} = useContext(Context)
 
     return (

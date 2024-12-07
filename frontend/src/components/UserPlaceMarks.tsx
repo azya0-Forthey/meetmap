@@ -4,18 +4,21 @@ import HintWindow from "./HintWindow";
 import {LngLat} from "ymaps3";
 import PLaceMarksService from "../services/PLaceMarksService";
 import {Context} from "../index";
+import {observer} from "mobx-react-lite"
 
 function UserPlaceMarks() {
     const getHint = useCallback((object) => object?.properties?.hint, []);
     const [placeMarks, setPlaceMarks] = React.useState([]);
-    const {store} = useContext(Context)
+    const {store} = useContext(Context);
 
     useEffect(() => {
-        if (store.isAuth) {
-            PLaceMarksService.getUserPlaceMarks()
-                .then(response => setPlaceMarks(response.data))
+        if (!store.isAuth) {
+            return;
         }
-    }, [])
+
+        PLaceMarksService.getUserPlaceMarks()
+            .then(response => setPlaceMarks(response.data));
+    }, [store.isAuth]);
 
     return (
         <>
@@ -48,4 +51,4 @@ function UserPlaceMarks() {
     );
 }
 
-export default UserPlaceMarks;
+export default observer(UserPlaceMarks);

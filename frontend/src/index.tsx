@@ -1,4 +1,4 @@
-import React, {createContext} from 'react';
+import {createContext} from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
@@ -8,21 +8,14 @@ const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
 
-interface State {
-    store: Store;
-}
-
 const store = new Store();
 
-export const Context = createContext<State>({
+export const Context = createContext<{store: Store}>({
     store,
-})
+});
 
 root.render(
-    // Со строгим режимом Яндекс Карты не работают...
-    // <React.StrictMode>
     <Context.Provider value={{store}}>
         <App />
     </Context.Provider>
-    // </React.StrictMode>
 );

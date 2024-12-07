@@ -1,47 +1,31 @@
-import React, {MouseEventHandler, useCallback, useEffect, useState} from 'react';
-import {Config, DomEventHandlerObject, LngLat, MapEventUpdateHandler, YMapLocationRequest} from "ymaps3";
+import {YMapLocationRequest} from "ymaps3";
 import useWindowDimensions from "../lib/get_window_size";
-import {
-    YMap,
-    YMapDefaultFeaturesLayer,
-    YMapDefaultMarker,
-    YMapDefaultSchemeLayer,
-    YMapHint,
-    YMapListener
-} from "../lib/ymaps";
-import HintWindow from "./HintWindow";
+import {YMap, YMapDefaultFeaturesLayer, YMapDefaultSchemeLayer} from "../lib/ymaps";
 import NavigationBar from "./NavigationBar";
 import UserPlaceMarks from "./UserPlaceMarks";
+import type {LngLatBounds, ZoomRange} from '@yandex/ymaps3-types';
+
 
 function Map() {
-    const [markerSource, setMarkerSource] = useState<PlaceMark[]>([])
-
-    useEffect(() => {
-        setMarkerSource([{
-            name: 'ЭТО МОСКВА',
-            description: 'И Я НАКОНЕЦ-ТО ЗАСТАВИЛ ЭТУ ВЕЩЬ РАБОТАТЬ',
-            latitude: 37.588144,
-            longitude: 55.733842,
-            id: 1,
-            create_date: new Date(),
-            is_active: true,
-            user_id: 1,
-        }])
-    }, [])
-
     const defaultLoc: YMapLocationRequest = {
         center: [37.588144, 55.733842],
         zoom: 9
     }
 
-    function alertInfo(index: number) {
-        alert(markerSource[index].description)
-    }
+    const RESTRICT_AREA: LngLatBounds = [
+        [23.530451, 42.11191],
+        [170.36641, 76.1558141]
+    ];
+
+    const ZOOM_AREA: ZoomRange = {
+        min: 5,
+        max: 20
+    };
 
     return (
         <div style={useWindowDimensions()}>
             <NavigationBar />
-            <YMap location={defaultLoc} theme="dark">
+            <YMap location={defaultLoc} restrictMapArea={RESTRICT_AREA} zoomRange={ZOOM_AREA} theme="dark">
                 <YMapDefaultSchemeLayer/>
                 <YMapDefaultFeaturesLayer/>
                 <UserPlaceMarks/>

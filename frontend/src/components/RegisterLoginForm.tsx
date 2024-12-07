@@ -1,6 +1,6 @@
 import "../styles/RegisterLoginForm.css"
 
-import React, {useContext, useEffect, useState} from "react";
+import {useContext, useEffect, useState} from "react";
 import {Link, useNavigate} from "react-router-dom";
 import {Context} from "../index";
 import {observer} from "mobx-react-lite";
@@ -15,10 +15,6 @@ function RegisterLoginForm() {
             navigate("/")
         }
     }, []);
-
-    const toggleForm = () => {
-        setIsLogin(!isLogin);
-    };
 
     return (
         <div className="form-container">
